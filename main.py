@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException, Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from typing import Dict, List, Tuple
@@ -5,7 +6,9 @@ import uvicorn
 import secrets
 import os
 import logging
+import asyncio
 from urllib.parse import unquote, parse_qs
+from starlette.websockets import WebSocketState
 
 # Initialize logger
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -80,6 +83,24 @@ async def websocket_endpoint(websocket: WebSocket, channel: str):
             (ws, cid) for ws, cid in channels[channel] if ws != websocket
         ]
         logger.info("WebSocket disconnected from channel: %s (clientId=%s)", channel, client_id)
+
+# Background task to clean up dead WebSocket connections
+@app.on_event("startup")
+async def start_cleanup_task():
+    async def cleanup_dead_connections():
+        while True:
+            logger.debug("Running cleanup task for dead WebSocket connections...")
+            for channel, connections in list(channels.items()):
+                new_list = []
+                for ws, client_id in connections:
+                    if ws.client_state != WebSocketState.CONNECTED:
+                        logger.info("Removing dead WebSocket (clientId=%s) from channel: %s", client_id, channel)
+                        continue
+                    new_list.append((ws, client_id))
+                channels[channel] = new_list
+            await asyncio.sleep(30)  # check every 30 seconds
+
+    asyncio.create_task(cleanup_dead_connections())
 
 if __name__ == "__main__":
     logger.info("Starting notification server on port 3083...")
