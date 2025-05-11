@@ -1,82 +1,91 @@
 <body>
     <script>
-    (function() {
-        const serverUrl = "###ServerUrl###";            // <- Set your server + port here, will be replaced from HLX:Notifier:Config Url Value
-        const channel = "$1225051102$";                // Channel name (e.g., form ID)
-        const clientId = "$1225051110$";               // Unique per-user or session ID (from AR Server)
-    
-        const instanceId = Date.now() + "-" + Math.random().toString(36).substr(2, 5);
-        window.__hlxNotifierInstanceId = instanceId;
-        window.__hlxNotifierClientId = clientId;
-    
-        // Clean up any existing WebSocket
-        if (window.__hlxNotifierWS) {
-            const ws = window.__hlxNotifierWS;
-            if (ws.readyState === WebSocket.CONNECTING) {
-                console.log("WebSocket still connecting. Delaying close slightly...");
-                setTimeout(() => {
-                    try {
-                        ws.onmessage = null;
-                        ws.onerror = null;
-                        ws.onclose = null;
-                        ws.close(1000, "Delayed reinitialization");
-                    } catch (e) {
-                        console.warn("Error while closing CONNECTING WebSocket:", e);
-                    }
-                }, 50);
-            } else if (ws.readyState === WebSocket.OPEN) {
-                console.log("Closing existing WebSocket immediately.");
-                ws.onmessage = null;
-                ws.onerror = null;
-                ws.onclose = null;
-                ws.close(1000, "Reinitializing script");
-            }
-            window.__hlxNotifierWS = null;
-        }
-    
-        const wsUrl = "ws://" + serverUrl + "/ws/" + channel + "?clientId=" + encodeURIComponent(clientId);
-        const ws = new WebSocket(wsUrl);
-        window.__hlxNotifierWS = ws;
-    
-        console.log("Connecting to channel:", channel, "Instance ID:", instanceId, "Client ID:", clientId);
-    
-        ws.onopen = function() {
-            console.log("WebSocket connected to channel:", channel);
-        };
-    
-        ws.onmessage = function(event) {
-            if (window.__hlxNotifierInstanceId !== instanceId) {
-                console.log("Ignoring message from old WebSocket instance");
-                return;
-            }
-    
-            console.log("Push notification received:", event.data);
-            try {
-                const data = JSON.parse(event.data);
-                const eventName = channel;
-                const requestId = data.message;
-    
-                if (parent && parent.DView && typeof parent.DView.SendSignalToParent === "function") {
-                    console.log("Sending signal to AR Server: event =", eventName, " requestId =", requestId);
-                    parent.DView.SendSignalToParent(undefined, eventName, requestId);
-                } else {
-                    console.warn("Unable to send signal – parent.DView.SendSignalToParent is missing");
+    (function () {
+        const serverUrl = "###ServerUrl###";
+        const channel = "$1225051102$";
+        const clientId = "$1225051110$";
+
+        function initWebSocket() {
+            const instanceId = Date.now() + "-" + Math.random().toString(36).substr(2, 5);
+            window.__hlxNotifierInstanceId = instanceId;
+            window.__hlxNotifierClientId = clientId;
+
+            if (window.__hlxNotifierWS) {
+                const ws = window.__hlxNotifierWS;
+                if (ws.readyState === WebSocket.CONNECTING) {
+                    console.log("WebSocket still connecting. Delaying close slightly...");
+                    setTimeout(() => {
+                        try {
+                            ws.onmessage = null;
+                            ws.onerror = null;
+                            ws.onclose = null;
+                            ws.close(1000, "Delayed reinitialization");
+                        } catch (e) {
+                            console.warn("Error while closing CONNECTING WebSocket:", e);
+                        }
+                    }, 50);
+                } else if (ws.readyState === WebSocket.OPEN) {
+                    console.log("Closing existing WebSocket immediately.");
+                    ws.onmessage = null;
+                    ws.onerror = null;
+                    ws.onclose = null;
+                    ws.close(1000, "Reinitializing script");
                 }
-    
-            } catch (e) {
-                console.error("Error handling push data:", e);
+                window.__hlxNotifierWS = null;
             }
-        };
-    
-        ws.onerror = function(error) {
-            console.error("WebSocket error:", error);
-        };
-    
-        ws.onclose = function(event) {
-            console.warn("WebSocket disconnected. Code:", event.code, "Reason:", event.reason);
-            window.__hlxNotifierWS = null;
-            window.__hlxNotifierInstanceId = null;
-        };
+
+            const wsUrl = "ws://" + serverUrl + "/ws/" + channel + "?clientId=" + encodeURIComponent(clientId);
+            const ws = new WebSocket(wsUrl);
+            window.__hlxNotifierWS = ws;
+
+            console.log("Connecting to channel:", channel, "Instance ID:", instanceId, "Client ID:", clientId);
+
+            ws.onopen = function () {
+                console.log("WebSocket connected to channel:", channel);
+            };
+
+            ws.onmessage = function (event) {
+                if (window.__hlxNotifierInstanceId !== instanceId) {
+                    console.log("Ignoring message from old WebSocket instance");
+                    return;
+                }
+
+                console.log("Push notification received:", event.data);
+                try {
+                    const data = JSON.parse(event.data);
+                    const eventName = channel;
+                    const requestId = data.message;
+
+                    if (parent && parent.DView && typeof parent.DView.SendSignalToParent === "function") {
+                        console.log("Sending signal to AR Server: event =", eventName, " requestId =", requestId);
+                        parent.DView.SendSignalToParent(undefined, eventName, requestId);
+                    } else {
+                        console.warn("Unable to send signal – parent.DView.SendSignalToParent is missing");
+                    }
+
+                } catch (e) {
+                    console.error("Error handling push data:", e);
+                }
+            };
+
+            ws.onerror = function (error) {
+                console.error("WebSocket error:", error);
+            };
+
+            ws.onclose = function (event) {
+                console.warn("WebSocket disconnected. Code:", event.code, "Reason:", event.reason);
+                window.__hlxNotifierWS = null;
+                window.__hlxNotifierInstanceId = null;
+
+                // Retry connection
+                setTimeout(() => {
+                    console.log("Reconnecting WebSocket...");
+                    initWebSocket(); // recursive reconnect
+                }, 2000);
+            };
+        }
+
+        initWebSocket();
     })();
     </script>
     </body>
