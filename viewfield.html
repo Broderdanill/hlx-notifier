@@ -5,6 +5,8 @@
         const channel = "$1225051102$";
         const clientId = "$1225051110$";
     
+        console.log("📡 Initializing WebSocket for clientId:", clientId, "on channel:", channel);
+    
         function initWebSocket() {
             window.__hlxNotifierClientId = clientId;
     
@@ -36,42 +38,45 @@
             const ws = new WebSocket(wsUrl);
             window.__hlxNotifierWS = ws;
     
-            console.log("Connecting to channel:", channel, "Client ID:", clientId);
+            console.log("🔌 Connecting to channel:", channel, "Client ID:", clientId);
     
             ws.onopen = function () {
-                console.log("WebSocket connected to channel:", channel);
+                console.log("✅ WebSocket connected to channel:", channel);
             };
     
             ws.onmessage = function (event) {
-                console.log("Push notification received:", event.data);
+                console.log("🔥 onmessage fired:", event.data); // Viktigt för felsökning
+    
                 try {
                     const data = JSON.parse(event.data);
                     const eventName = channel;
                     const requestId = data.message;
     
+                    console.log("📨 Push received on clientId:", clientId, "| event =", eventName, "| requestId =", requestId);
+    
                     if (parent && parent.DView && typeof parent.DView.SendSignalToParent === "function") {
-                        console.log("Sending signal to AR Server: event =", eventName, " requestId =", requestId);
+                        console.log("📤 Sending signal to AR Server: event =", eventName, "requestId =", requestId);
                         parent.DView.SendSignalToParent(undefined, eventName, requestId);
                     } else {
-                        console.warn("Unable to send signal – parent.DView.SendSignalToParent is missing");
+                        console.warn("⚠️ Unable to send signal – parent.DView.SendSignalToParent is missing");
                     }
     
                 } catch (e) {
-                    console.error("Error handling push data:", e);
+                    console.error("❌ Error handling push data:", e);
                 }
             };
     
             ws.onerror = function (error) {
-                console.error("WebSocket error:", error);
+                console.error("🚨 WebSocket error:", error);
             };
     
             ws.onclose = function (event) {
-                console.warn("WebSocket disconnected. Code:", event.code, "Reason:", event.reason);
+                console.warn("❗ WebSocket disconnected. Code:", event.code, "Reason:", event.reason);
                 window.__hlxNotifierWS = null;
     
                 // Retry connection
                 setTimeout(() => {
-                    console.log("Reconnecting WebSocket...");
+                    console.log("🔄 Reconnecting WebSocket...");
                     initWebSocket();
                 }, 2000);
             };
@@ -79,6 +84,7 @@
             // Ping every 20 seconds to keep connection alive
             setInterval(() => {
                 if (ws.readyState === WebSocket.OPEN) {
+                    console.log("📡 Sending keepalive ping from clientId:", clientId);
                     ws.send("ping");
                 }
             }, 20000);

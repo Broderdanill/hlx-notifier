@@ -11,7 +11,7 @@ from urllib.parse import unquote, parse_qs
 from starlette.websockets import WebSocketState
 
 # Initialize logger
-LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG").upper()
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -79,6 +79,13 @@ async def websocket_endpoint(websocket: WebSocket, channel: str):
 
     if channel not in channels:
         channels[channel] = []
+
+    # Remove any existing connection with the same clientId
+    previous = [ws for ws, cid in channels[channel] if cid == client_id]
+    if previous:
+        logger.info("Replacing existing connection for clientId=%s on channel=%s", client_id, channel)
+        channels[channel] = [(ws, cid) for ws, cid in channels[channel] if cid != client_id]
+
     channels[channel].append((websocket, client_id))
     logger.info("New WebSocket connection on channel: %s (clientId=%s)", channel, client_id)
 
