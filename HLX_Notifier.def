@@ -1,6 +1,6 @@
 char-set: UTF-8
 #
-#  File exported Sun May 11 07:45:53 UTC 2025
+#  File exported Sun May 11 07:57:37 UTC 2025
 #
 begin application
    name           : HLX:Notifier
@@ -14,7 +14,7 @@ begin container
    export-version : 12
    label          : HLX:Notifier
    description    : Helix Push Notifier Application
-   object-prop    : 3\90015\2\4\90016\4\1\1\90002\4\12\HLX:Notifier\
+   object-prop    : 3\90016\4\1\1\90015\2\4\90002\4\12\HLX:Notifier\
 reference {
    type           : 32839
    datatype       : 1
@@ -43,7 +43,7 @@ reference {
 reference {
    type           : 2
    datatype       : 0
-   object         : HLX:Notifier:Template
+   object         : HLX:Notifier:Config
 }
 reference {
    type           : 32778
@@ -103,7 +103,7 @@ reference {
 reference {
    type           : 2
    datatype       : 0
-   object         : HLX:Notifier:Template
+   object         : HLX:Notifier:Config
 }
 end
 begin schema
@@ -938,25 +938,25 @@ field {
 }
 end
 begin schema
-   name           : HLX:Notifier:Template
+   name           : HLX:Notifier:Config
    core-version   : 2
    upgrade-version: 0
-   num-fields     : 12
-   timestamp      : 1746942406
+   num-fields     : 14
+   timestamp      : 1746949945
    owner          : dice
    last-changed   : dice
    default-vui    : Default Administrator View__c
    num-vuis       : 1
    export-version : 12
    schema-type    : 1
-   next-field-id  : 1225051105
+   next-field-id  : 1225051131
    index          : 1\379\1\0
    object-prop    : 4\0\0\90015\2\4\90016\4\1\1\90002\4\12\HLX:Notifier\
    assoc-to-follow-type : archive
   assoc-to-follow : 
    assoc-sel-type : 0
      assoc-list   : 0\
-   schema-row-identifier : 98e13bd427aaa1cf377a48861817e69b
+   schema-row-identifier : e38a6929dabce5a4bacd724ffc7cdc6d
 vui  {
    id             : 536870912
    name           : Default Administrator View__c
@@ -976,7 +976,7 @@ field {
    fieldtype      : 1
    create-mode    : 2
    option         : 3
-   timestamp      : 1746942406
+   timestamp      : 1746949702
    owner          : dice
    last-changed   : dice
    length-units   : 0
@@ -988,8 +988,8 @@ field {
    permission     : 0\1
    permission     : 4\1
    permission     : 3\1
- display-instance : 536870912\14\3\41\2\4274\2500\24971\4300\4\6\1\7\40\2147483640\20\4\10\Request ID\21\41\2\0\400\4949\1800\27\8\16\28\6\4\29\6\1\60\40\1\65\41\2\0\0\0\0\1&
- display-instance : 43\40\4294967295\151\41\2\5511\0\20696\1800\170\40\0\231\6\1\
+ display-instance : 536870912\14\3\41\2\5849\34700\26546\36500\4\6\1\7\40\2147483640\20\4\10\Request ID\21\41\2\0\400\4949\1800\27\8\16\28\6\4\29\6\1\60\40\1\65\41\2\0\0\0\0&
+ display-instance : \143\40\4294967295\151\41\2\5511\0\20696\1800\170\40\0\231\6\1\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
 field {
@@ -999,7 +999,7 @@ field {
    fieldtype      : 1
    create-mode    : 1
    option         : 1
-   timestamp      : 1746942406
+   timestamp      : 1746949702
    owner          : dice
    last-changed   : dice
    length-units   : 0
@@ -1011,8 +1011,8 @@ field {
    default        : $-1$
    permission     : 4\1
    permission     : 3\1
- display-instance : 536870912\16\3\41\2\4499\5000\27558\6800\4\6\1\7\40\2147483641\20\4\9\Submitter\21\41\2\0\400\4724\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\30\65\41\2\0\&
- display-instance : 0\0\0\66\41\2\21034\0\23058\1800\143\40\4294967295\151\41\2\5286\0\20471\1800\170\40\0\231\6\0\
+ display-instance : 536870912\16\3\41\2\6074\37200\29133\39000\4\6\1\7\40\2147483641\20\4\9\Submitter\21\41\2\0\400\4724\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\30\65\41\2\&
+ display-instance : 0\0\0\0\66\41\2\21034\0\23058\1800\143\40\4294967295\151\41\2\5286\0\20471\1800\170\40\0\231\6\0\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
 field {
@@ -1022,13 +1022,13 @@ field {
    fieldtype      : 1
    create-mode    : 2
    option         : 3
-   timestamp      : 1746942406
+   timestamp      : 1746949702
    owner          : dice
    last-changed   : dice
    permission     : 4\1
    permission     : 3\1
- display-instance : 536870912\16\3\41\2\3937\7500\27559\9300\4\6\1\7\40\2147483642\20\4\11\Create Date\21\41\2\0\400\5286\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\23\65\41\2&
- display-instance : \0\0\0\0\66\41\2\21597\0\23621\1800\143\40\4294967295\151\41\2\5849\0\21034\1800\170\40\0\231\6\0\
+ display-instance : 536870912\16\3\41\2\5511\39700\29133\41500\4\6\1\7\40\2147483642\20\4\11\Create Date\21\41\2\0\400\5286\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\23\65\41&
+ display-instance : \2\0\0\0\0\66\41\2\21597\0\23621\1800\143\40\4294967295\151\41\2\5849\0\21034\1800\170\40\0\231\6\0\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
 field {
@@ -1038,7 +1038,7 @@ field {
    fieldtype      : 1
    create-mode    : 2
    option         : 2
-   timestamp      : 1746942406
+   timestamp      : 1746949702
    owner          : dice
    last-changed   : dice
    length-units   : 0
@@ -1048,7 +1048,7 @@ field {
    qbe-match-op   : 1
    fulltext-optns : 0
    permission     : 4\1
- display-instance : 536870912\16\3\41\2\3937\10000\27559\11800\4\6\1\7\40\2147483643\20\4\11\Assigned To\21\41\2\0\400\5286\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\30\65\41&
+ display-instance : 536870912\16\3\41\2\5511\42200\29133\44000\4\6\1\7\40\2147483643\20\4\11\Assigned To\21\41\2\0\400\5286\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\30\65\41&
  display-instance : \2\0\0\0\0\66\41\2\21597\0\23621\1800\143\40\4294967295\151\41\2\5849\0\21034\1800\170\40\0\231\6\0\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
@@ -1059,7 +1059,7 @@ field {
    fieldtype      : 1
    create-mode    : 2
    option         : 3
-   timestamp      : 1746942406
+   timestamp      : 1746949702
    owner          : dice
    last-changed   : dice
    length-units   : 0
@@ -1069,7 +1069,7 @@ field {
    qbe-match-op   : 1
    fulltext-optns : 0
    permission     : 4\1
- display-instance : 536870912\16\3\41\2\2249\12500\27558\14300\4\6\1\7\40\2147483644\20\4\16\Last Modified By\21\41\2\0\400\6974\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\33\&
+ display-instance : 536870912\16\3\41\2\3824\44700\29133\46500\4\6\1\7\40\2147483644\20\4\16\Last Modified By\21\41\2\0\400\6974\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\33\&
  display-instance : 65\41\2\0\0\0\0\66\41\2\23284\0\25308\1800\143\40\4294967295\151\41\2\7536\0\22721\1800\170\40\0\231\6\0\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
@@ -1080,11 +1080,11 @@ field {
    fieldtype      : 1
    create-mode    : 2
    option         : 3
-   timestamp      : 1746942406
+   timestamp      : 1746949702
    owner          : dice
    last-changed   : dice
    permission     : 4\1
- display-instance : 536870912\16\3\41\2\3262\15000\27558\16800\4\6\1\7\40\2147483645\20\4\13\Modified Date\21\41\2\0\400\5961\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\23\65\&
+ display-instance : 536870912\16\3\41\2\4836\47200\29132\49000\4\6\1\7\40\2147483645\20\4\13\Modified Date\21\41\2\0\400\5961\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\23\65\&
  display-instance : 41\2\0\0\0\0\66\41\2\22272\0\24296\1800\143\40\4294967295\151\41\2\6524\0\21709\1800\170\40\0\231\6\0\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
@@ -1095,7 +1095,7 @@ field {
    fieldtype      : 1
    create-mode    : 2
    option         : 1
-   timestamp      : 1746942406
+   timestamp      : 1746949702
    owner          : dice
    last-changed   : dice
    enum-value     : New
@@ -1106,7 +1106,7 @@ field {
    default        : 0
    permission     : 4\2
    permission     : 3\1
- display-instance : 536870912\17\3\41\2\5849\17500\34645\19000\4\6\1\7\40\2147483646\20\4\6\Status\21\41\2\0\400\3374\1500\27\8\16\28\6\4\29\6\1\60\40\1\61\40\0\64\6\1\65\41&
+ display-instance : 536870912\17\3\41\2\7424\49700\36220\51200\4\6\1\7\40\2147483646\20\4\6\Status\21\41\2\0\400\3374\1500\27\8\16\28\6\4\29\6\1\60\40\1\61\40\0\64\6\1\65\41&
  display-instance : \2\0\0\0\0\143\40\4294967295\151\41\2\3937\400\28796\1900\170\40\0\230\4\46\5\0\New\1\Assigned\2\Fixed\3\Rejected\4\Closed\231\6\0\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
@@ -1117,7 +1117,7 @@ field {
    fieldtype      : 1
    create-mode    : 1
    option         : 1
-   timestamp      : 1746942406
+   timestamp      : 1746949702
    owner          : dice
    last-changed   : dice
    length-units   : 0
@@ -1129,7 +1129,7 @@ field {
    default        : x
    permission     : 4\1
    permission     : 3\1
- display-instance : 536870912\16\3\41\2\1012\20000\27558\21800\4\6\1\7\40\2147483647\20\4\17\Short Description\21\41\2\0\400\8211\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\50&
+ display-instance : 536870912\16\3\41\2\2587\52200\29133\54000\4\6\1\7\40\2147483647\20\4\17\Short Description\21\41\2\0\400\8211\1800\27\8\16\28\6\4\29\6\1\60\40\1\61\40\50&
  display-instance : \65\41\2\0\0\0\0\66\41\2\24521\0\26545\1800\143\40\4294967295\151\41\2\8773\0\23958\1800\170\40\0\231\6\0\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
@@ -1186,12 +1186,12 @@ field {
 }
 field {
    id             : 1225051104
-   name           : Template
+   name           : HTML
    datatype       : 4
    fieldtype      : 1
    create-mode    : 2
    option         : 2
-   timestamp      : 1746942406
+   timestamp      : 1746949945
    owner          : dice
    last-changed   : dice
    length-units   : 0
@@ -1200,10 +1200,53 @@ field {
    menu-style     : 2
    qbe-match-op   : 1
    fulltext-optns : 0
- display-instance : 536870912\40\4\0\3\41\2\4499\26800\30708\28600\4\6\1\5\6\2\7\40\2147483648\14\40\1\20\4\8\Template\21\41\2\0\400\7874\1800\60\40\1\66\41\2\24184\0\26208\&
- display-instance : 1800\143\40\4294967295\151\41\2\8436\0\23621\1800\170\40\0\231\6\0\288\6\0\289\4\4\0x00\290\4\4\0x00\310\6\0\5116\6\0\5233\4\0\\5234\4\4\left\5296\4\0\\5&
- display-instance : 302\6\0\5314\6\0\5315\2\0\5345\4\0\\5347\4\0\\5352\2\0\5353\4\0\\5354\2\0\5368\4\0\\5369\4\0\\5373\6\0\5375\6\0\5378\4\0\\5380\4\0\\5382\6\0\5383\4\0\\53&
- display-instance : 97\4\0\\5403\6\0\
+ display-instance : 536870912\39\3\41\2\30146\30100\93588\50900\4\6\1\5\6\2\7\40\2147483648\14\40\1\20\4\4\HTML\21\41\2\0\400\7874\1800\60\40\20\66\41\2\61417\0\63441\1800\1&
+ display-instance : 43\40\4294967295\151\41\2\8436\0\60854\20800\170\40\0\231\6\0\288\6\0\289\4\4\0x00\290\4\4\0x00\310\6\0\5116\6\0\5233\4\0\\5234\4\4\left\5296\4\0\\5302\6&
+ display-instance : \0\5314\6\0\5315\2\0\5345\4\0\\5347\4\0\\5352\2\0\5353\4\0\\5354\2\0\5368\4\0\\5369\4\0\\5373\6\0\5375\6\0\5378\4\0\\5380\4\0\\5382\6\0\5383\4\0\\5397\4\&
+ display-instance : 0\\5403\6\0\
+   object-prop    : 2\90016\4\1\1\90015\2\4\
+}
+field {
+   id             : 1225051120
+   name           : ServerUrl
+   datatype       : 4
+   fieldtype      : 1
+   create-mode    : 2
+   option         : 2
+   timestamp      : 1746949833
+   owner          : dice
+   last-changed   : dice
+   length-units   : 0
+   maxlength      : 0
+   clob-store-opt : 0
+   menu-style     : 2
+   qbe-match-op   : 1
+   fulltext-optns : 0
+ display-instance : 536870912\39\3\41\2\1687\1800\27896\3600\4\6\1\5\6\2\7\40\2147483649\14\40\1\20\4\9\ServerUrl\21\41\2\0\400\7874\1800\60\40\1\66\41\2\24184\0\26208\1800\&
+ display-instance : 143\40\4294967295\151\41\2\8436\0\23621\1800\170\40\0\231\6\0\288\6\0\289\4\4\0x00\290\4\4\0x00\310\6\0\5116\6\0\5233\4\0\\5234\4\4\left\5296\4\0\\5302\6&
+ display-instance : \0\5314\6\0\5315\2\0\5345\4\0\\5347\4\0\\5352\2\0\5353\4\0\\5354\2\0\5368\4\0\\5369\4\0\\5373\6\0\5375\6\0\5378\4\0\\5380\4\0\\5382\6\0\5383\4\0\\5397\4\&
+ display-instance : 0\\5403\6\0\
+   object-prop    : 2\90016\4\1\1\90015\2\4\
+}
+field {
+   id             : 1225051130
+   name           : Template
+   datatype       : 4
+   fieldtype      : 1
+   create-mode    : 2
+   option         : 2
+   timestamp      : 1746949945
+   owner          : dice
+   last-changed   : dice
+   length-units   : 0
+   maxlength      : 0
+   clob-store-opt : 0
+   menu-style     : 2
+   qbe-match-op   : 1
+   fulltext-optns : 0
+ display-instance : 536870912\38\4\0\3\41\2\1124\4700\64566\25500\4\6\1\5\6\2\7\40\2147483650\14\40\1\20\4\8\Template\21\41\2\0\400\7874\1800\60\40\20\66\41\2\61417\0\63441\&
+ display-instance : 1800\143\40\4294967295\151\41\2\8436\0\60854\20800\170\40\0\231\6\0\288\6\0\289\4\4\0x00\290\4\4\0x00\310\6\0\5116\6\0\5233\4\0\\5234\4\4\left\5296\4\0\\&
+ display-instance : 5302\6\0\5314\6\0\5315\2\0\5345\4\0\\5347\4\0\\5352\2\0\5353\4\0\\5354\2\0\5373\6\0\5375\6\0\5378\4\0\\5380\4\0\\5382\6\0\5383\4\0\\5397\4\0\\5403\6\0\
    object-prop    : 2\90016\4\1\1\90015\2\4\
 }
 end
@@ -1389,7 +1432,25 @@ begin active link
       set-field   : 0\1225051110\103\28\@@:Application-Generate-GUID\
    }
    action {
-      set-field   : 0\1225051105\102\1\@\21\HLX:Notifier:Template\1\1225051104\4\6\1\1225051104\2\0\2\3\
+      set-field   : 0\1225051105\102\1\@\19\HLX:Notifier:Config\1\1225051104\4\6\1\1225051104\2\0\2\3\
+   }
+   object-prop    : 3\90016\4\1\1\90015\2\4\90002\4\12\HLX:Notifier\
+   errhandler-opt : 0
+end
+begin filter
+   name           : HLX:Notifier:Config:S/M Set HTML from Template SetF
+   guid           : 0d396e555da79a88db25b5e2448bc386
+   timestamp      : 1746950118
+   owner          : dice
+   last-changed   : dice
+   filter-op      : 6
+   enable         : 1
+   filter-order   : 500
+   wk-conn-type   : 1
+   schema-name    : HLX:Notifier:Config
+   export-version : 12
+   action {
+      set-field   : 0\1225051104\105\23\3\102\1\@\1\@\1\1225051130\0\1\4\101\4\15\###ServerUrl###\102\1\@\1\@\1\1225051120\0\1\4\
    }
    object-prop    : 3\90015\2\4\90016\4\1\1\90002\4\12\HLX:Notifier\
    errhandler-opt : 0
@@ -1418,51 +1479,78 @@ begin filter
    errhandler-name: 
 end
 begin schema data
-   name           : HLX:Notifier:Template
+   name           : HLX:Notifier:Config
    data-mapping   : <?xml version="1.0" encoding="utf-8"?><arDocMapping xmlns="urn:remedy:schemas:ars" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0"> 
-   data-mapping   :    <element name="entryList">        <formMapping>            <form foreignKeyId="1" formName="HLX:Notifier:Template" mapType="embedded" primaryKeyId="
-   data-mapping   : 1"/>            <element name="entryItem">                <element dataType="string" name="f1_Request_ID__c">                    <fieldMapping arField
-   data-mapping   : Id="1"/>                </element>                <element dataType="string" name="f2_Submitter__c">                    <fieldMapping arFieldId="2"/>
-   data-mapping   :                 </element>                <element dataType="dateTime" name="f3_Create_Date__c">                    <fieldMapping arFieldId="3"/>     
-   data-mapping   :            </element>                <element dataType="string" name="f4_Assigned_To__c">                    <fieldMapping arFieldId="4"/>            
-   data-mapping   :     </element>                <element dataType="string" name="f5_Last_Modified_By__c">                    <fieldMapping arFieldId="5"/>              
-   data-mapping   :   </element>                <element dataType="dateTime" name="f6_Modified_Date__c">                    <fieldMapping arFieldId="6"/>                <
-   data-mapping   : /element>                <element dataType="string" name="f7_Status__c">                    <fieldMapping arFieldId="7"/>                </element>  
-   data-mapping   :               <element dataType="string" name="f8_Short_Description__c">                    <fieldMapping arFieldId="8"/>                </element>   
-   data-mapping   :              <element dataType="string" name="f15_Status_History">                    <fieldMapping arFieldId="15"/>                </element>        
-   data-mapping   :         <element dataType="string" name="f16_Notifier_Listening__c">                    <fieldMapping arFieldId="16"/>                </element>      
-   data-mapping   :           <element dataType="string" name="f37__Record_ID__c">                    <fieldMapping arFieldId="379"/>                </element>           
-   data-mapping   :      <element dataType="string" name="f1225051104_Template">                    <fieldMapping arFieldId="1225051104"/>                </element>      
-   data-mapping   :       </element>        </formMapping>    </element></arDocMapping>
+   data-mapping   :    <element name="entryList">        <formMapping>            <form foreignKeyId="1" formName="HLX:Notifier:Config" mapType="embedded" primaryKeyId="1"
+   data-mapping   : />            <element name="entryItem">                <element dataType="string" name="f1_Request_ID__c">                    <fieldMapping arFieldId
+   data-mapping   : ="1"/>                </element>                <element dataType="string" name="f2_Submitter__c">                    <fieldMapping arFieldId="2"/>  
+   data-mapping   :               </element>                <element dataType="dateTime" name="f3_Create_Date__c">                    <fieldMapping arFieldId="3"/>       
+   data-mapping   :          </element>                <element dataType="string" name="f4_Assigned_To__c">                    <fieldMapping arFieldId="4"/>              
+   data-mapping   :   </element>                <element dataType="string" name="f5_Last_Modified_By__c">                    <fieldMapping arFieldId="5"/>                
+   data-mapping   : </element>                <element dataType="dateTime" name="f6_Modified_Date__c">                    <fieldMapping arFieldId="6"/>                </e
+   data-mapping   : lement>                <element dataType="string" name="f7_Status__c">                    <fieldMapping arFieldId="7"/>                </element>    
+   data-mapping   :             <element dataType="string" name="f8_Short_Description__c">                    <fieldMapping arFieldId="8"/>                </element>     
+   data-mapping   :            <element dataType="string" name="f15_Status_History">                    <fieldMapping arFieldId="15"/>                </element>          
+   data-mapping   :       <element dataType="string" name="f16_Notifier_Listening__c">                    <fieldMapping arFieldId="16"/>                </element>        
+   data-mapping   :         <element dataType="string" name="f37__Record_ID__c">                    <fieldMapping arFieldId="379"/>                </element>             
+   data-mapping   :    <element dataType="string" name="f1225051104_HTML">                    <fieldMapping arFieldId="1225051104"/>                </element>            
+   data-mapping   :     <element dataType="string" name="f1225051120_ServerUrl">                    <fieldMapping arFieldId="1225051120"/>                </element>      
+   data-mapping   :           <element dataType="string" name="f1225051130_Template">                    <fieldMapping arFieldId="1225051130"/>                </element> 
+   data-mapping   :            </element>        </formMapping>    </element></arDocMapping>
    data           : <?xml version="1.0" encoding="utf-8"?><entryList xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">    
    data           : <entryItem>        <f1_Request_ID__c>000000000000001</f1_Request_ID__c>        <f2_Submitter__c>dice</f2_Submitter__c>        <f3_Create_Date__c>2025-
    data           : 05-11T05:54:34+00:00</f3_Create_Date__c>        <f4_Assigned_To__c xsi:nil="true"/>        <f5_Last_Modified_By__c>dice</f5_Last_Modified_By__c>      
-   data           :   <f6_Modified_Date__c>2025-05-11T07:34:56+00:00</f6_Modified_Date__c>        <f7_Status__c>New</f7_Status__c>        <f8_Short_Description__c>x</f8_Sh
+   data           :   <f6_Modified_Date__c>2025-05-11T07:56:36+00:00</f6_Modified_Date__c>        <f7_Status__c>New</f7_Status__c>        <f8_Short_Description__c>x</f8_Sh
    data           : ort_Description__c>        <f15_Status_History>2025-05-11T05:54:34+00:00dice</f15_Status_History>        <f16_Notifier_Listening__c>Not Listening
-   data           : </f16_Notifier_Listening__c>        <f37__Record_ID__c>AGGH00S1D6RMTASWDBQYSWDBQYG2L7</f37__Record_ID__c>        <f1225051104_Template>&lt;body&gt;   
-   data           :  &lt;script&gt;    (function() {        const serverUrl = "pingvin:3083";            // &lt;- Set your server + port here        const channel = "$122
-   data           : 5051102$";                // Channel name (e.g., form ID)        const clientId = "$1225051110$";               // Unique per-user or session ID (from A
-   data           : R Server)            const instanceId = Date.now() + "-" + Math.random().toString(36).substr(2, 5);        window.__hlxNotifierInstanceId = instanceId
-   data           : ;        window.__hlxNotifierClientId = clientId;            // Clean up any existing WebSocket        if (window.__hlxNotifierWS) {            cons
-   data           : t ws = window.__hlxNotifierWS;            if (ws.readyState === WebSocket.CONNECTING) {                console.log("WebSocket still connecting. Delayin
-   data           : g close slightly...");                setTimeout(() =&gt; {                    try {                        ws.onmessage = null;                     
-   data           :    ws.onerror = null;                        ws.onclose = null;                        ws.close(1000, "Delayed reinitialization");                    
-   data           : } catch (e) {                        console.warn("Error while closing CONNECTING WebSocket:", e);                    }                }, 50);       
-   data           :      } else if (ws.readyState === WebSocket.OPEN) {                console.log("Closing existing WebSocket immediately.");                ws.onmessage 
-   data           : = null;                ws.onerror = null;                ws.onclose = null;                ws.close(1000, "Reinitializing script");            }    
-   data           :         window.__hlxNotifierWS = null;        }            const wsUrl = "ws://" + serverUrl + "/ws/" + channel + "?clientId=" + encodeURIComponent(cl
-   data           : ientId);        const ws = new WebSocket(wsUrl);        window.__hlxNotifierWS = ws;            console.log("Connecting to channel:", channel, "Insta
-   data           : nce ID:", instanceId, "Client ID:", clientId);            ws.onopen = function() {            console.log("WebSocket connected to channel:", channel);
-   data           :         };            ws.onmessage = function(event) {            if (window.__hlxNotifierInstanceId !== instanceId) {                console.log("I
-   data           : gnoring message from old WebSocket instance");                return;            }                console.log("Push notification received:", event.da
-   data           : ta);            try {                const data = JSON.parse(event.data);                const eventName = channel;                const requestId = 
-   data           : data.message;                    if (parent &amp;&amp; parent.DView &amp;&amp; typeof parent.DView.SendSignalToParent === "function") {               
-   data           :      console.log("Sending signal to AR Server: event =", eventName, " requestId =", requestId);                    parent.DView.SendSignalToParent(undef
-   data           : ined, eventName, requestId);                } else {                    console.warn("Unable to send signal – parent.DView.SendSignalToParent is miss
-   data           : ing");                }                } catch (e) {                console.error("Error handling push data:", e);            }        };        
-   data           :     ws.onerror = function(error) {            console.error("WebSocket error:", error);        };            ws.onclose = function(event) {         
-   data           :    console.warn("WebSocket disconnected. Code:", event.code, "Reason:", event.reason);            window.__hlxNotifierWS = null;            window.__hl
-   data           : xNotifierInstanceId = null;        };    })();    &lt;/script&gt;    &lt;/body&gt;</f1225051104_Template>    </entryItem></entryList>
+   data           : </f16_Notifier_Listening__c>        <f37__Record_ID__c>AGGH00S1D6RMTASWDBQYSWDBQYG2L7</f37__Record_ID__c>        <f1225051104_HTML>&lt;body&gt;    &lt
+   data           : ;script&gt;    (function() {        const serverUrl = "pingvin:3083";            // &lt;- Set your server + port here, will be replaced from HLX:Notifi
+   data           : er:Config Url Value        const channel = "$1225051102$";                // Channel name (e.g., form ID)        const clientId = "$1225051110$";      
+   data           :          // Unique per-user or session ID (from AR Server)            const instanceId = Date.now() + "-" + Math.random().toString(36).substr(2, 5);  
+   data           :       window.__hlxNotifierInstanceId = instanceId;        window.__hlxNotifierClientId = clientId;            // Clean up any existing WebSocket     
+   data           :    if (window.__hlxNotifierWS) {            const ws = window.__hlxNotifierWS;            if (ws.readyState === WebSocket.CONNECTING) {               
+   data           :  console.log("WebSocket still connecting. Delaying close slightly...");                setTimeout(() =&gt; {                    try {                 
+   data           :        ws.onmessage = null;                        ws.onerror = null;                        ws.onclose = null;                        ws.close(1000, 
+   data           : "Delayed reinitialization");                    } catch (e) {                        console.warn("Error while closing CONNECTING WebSocket:", e);    
+   data           :                 }                }, 50);            } else if (ws.readyState === WebSocket.OPEN) {                console.log("Closing existing WebSoc
+   data           : ket immediately.");                ws.onmessage = null;                ws.onerror = null;                ws.onclose = null;                ws.close(1
+   data           : 000, "Reinitializing script");            }            window.__hlxNotifierWS = null;        }            const wsUrl = "ws://" + serverUrl + "/ws/"
+   data           :  + channel + "?clientId=" + encodeURIComponent(clientId);        const ws = new WebSocket(wsUrl);        window.__hlxNotifierWS = ws;            cons
+   data           : ole.log("Connecting to channel:", channel, "Instance ID:", instanceId, "Client ID:", clientId);            ws.onopen = function() {            console
+   data           : .log("WebSocket connected to channel:", channel);        };            ws.onmessage = function(event) {            if (window.__hlxNotifierInstanceId
+   data           :  !== instanceId) {                console.log("Ignoring message from old WebSocket instance");                return;            }                co
+   data           : nsole.log("Push notification received:", event.data);            try {                const data = JSON.parse(event.data);                const eventN
+   data           : ame = channel;                const requestId = data.message;                    if (parent &amp;&amp; parent.DView &amp;&amp; typeof parent.DView.Sen
+   data           : dSignalToParent === "function") {                    console.log("Sending signal to AR Server: event =", eventName, " requestId =", requestId);        
+   data           :             parent.DView.SendSignalToParent(undefined, eventName, requestId);                } else {                    console.warn("Unable to send s
+   data           : ignal – parent.DView.SendSignalToParent is missing");                }                } catch (e) {                console.error("Error handling pu
+   data           : sh data:", e);            }        };            ws.onerror = function(error) {            console.error("WebSocket error:", error);        };    
+   data           :         ws.onclose = function(event) {            console.warn("WebSocket disconnected. Code:", event.code, "Reason:", event.reason);            windo
+   data           : w.__hlxNotifierWS = null;            window.__hlxNotifierInstanceId = null;        };    })();    &lt;/script&gt;    &lt;/body&gt;</f1225051104_HTML
+   data           : >        <f1225051120_ServerUrl>pingvin:3083</f1225051120_ServerUrl>        <f1225051130_Template>&lt;body&gt;    &lt;script&gt;    (function() {   
+   data           :      const serverUrl = "###ServerUrl###";            // &lt;- Set your server + port here, will be replaced from HLX:Notifier:Config Url Value        co
+   data           : nst channel = "$1225051102$";                // Channel name (e.g., form ID)        const clientId = "$1225051110$";               // Unique per-user or
+   data           :  session ID (from AR Server)            const instanceId = Date.now() + "-" + Math.random().toString(36).substr(2, 5);        window.__hlxNotifierInst
+   data           : anceId = instanceId;        window.__hlxNotifierClientId = clientId;            // Clean up any existing WebSocket        if (window.__hlxNotifierWS)
+   data           :  {            const ws = window.__hlxNotifierWS;            if (ws.readyState === WebSocket.CONNECTING) {                console.log("WebSocket still 
+   data           : connecting. Delaying close slightly...");                setTimeout(() =&gt; {                    try {                        ws.onmessage = null;  
+   data           :                       ws.onerror = null;                        ws.onclose = null;                        ws.close(1000, "Delayed reinitialization"); 
+   data           :                    } catch (e) {                        console.warn("Error while closing CONNECTING WebSocket:", e);                    }            
+   data           :     }, 50);            } else if (ws.readyState === WebSocket.OPEN) {                console.log("Closing existing WebSocket immediately.");          
+   data           :       ws.onmessage = null;                ws.onerror = null;                ws.onclose = null;                ws.close(1000, "Reinitializing script");
+   data           :             }            window.__hlxNotifierWS = null;        }            const wsUrl = "ws://" + serverUrl + "/ws/" + channel + "?clientId=" + en
+   data           : codeURIComponent(clientId);        const ws = new WebSocket(wsUrl);        window.__hlxNotifierWS = ws;            console.log("Connecting to channel
+   data           : :", channel, "Instance ID:", instanceId, "Client ID:", clientId);            ws.onopen = function() {            console.log("WebSocket connected to c
+   data           : hannel:", channel);        };            ws.onmessage = function(event) {            if (window.__hlxNotifierInstanceId !== instanceId) {           
+   data           :      console.log("Ignoring message from old WebSocket instance");                return;            }                console.log("Push notification r
+   data           : eceived:", event.data);            try {                const data = JSON.parse(event.data);                const eventName = channel;               
+   data           :  const requestId = data.message;                    if (parent &amp;&amp; parent.DView &amp;&amp; typeof parent.DView.SendSignalToParent === "function"
+   data           : ) {                    console.log("Sending signal to AR Server: event =", eventName, " requestId =", requestId);                    parent.DView.SendS
+   data           : ignalToParent(undefined, eventName, requestId);                } else {                    console.warn("Unable to send signal – parent.DView.SendSig
+   data           : nalToParent is missing");                }                } catch (e) {                console.error("Error handling push data:", e);            } 
+   data           :        };            ws.onerror = function(error) {            console.error("WebSocket error:", error);        };            ws.onclose = function
+   data           : (event) {            console.warn("WebSocket disconnected. Code:", event.code, "Reason:", event.reason);            window.__hlxNotifierWS = null;    
+   data           :         window.__hlxNotifierInstanceId = null;        };    })();    &lt;/script&gt;    &lt;/body&gt;</f1225051130_Template>    </entryItem></entry
+   data           : List>
 end
 
 begin schema data
