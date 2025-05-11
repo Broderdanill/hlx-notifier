@@ -1,11 +1,11 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException, Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import uvicorn
 import secrets
 import os
 import logging
-from urllib.parse import unquote
+from urllib.parse import unquote, parse_qs
 
 # Initialize logger
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 security = HTTPBasic()
 
-# Dictionary mapping channels to lists of connected WebSockets
-channels: Dict[str, List[WebSocket]] = {}
+# Dictionary mapping channels to list of (WebSocket, clientId)
+channels: Dict[str, List[Tuple[WebSocket, str]]] = {}
 
 # Read username/password from environment variables (default fallback)
 VALID_USERNAME = os.getenv("AUTH_USERNAME", "admin")
@@ -35,37 +35,51 @@ async def notify(request: Request, credentials: HTTPBasicCredentials = Depends(a
     data = await request.json()
     channel = data.get("channel")
     message = data.get("message")
+    origin_client_id = data.get("originClientId")  # Optional
 
-    logger.info("Received notification: channel=%s, message=%s", channel, message)
+    logger.info("Received notification: channel=%s, message=%s, originClientId=%s",
+                channel, message, origin_client_id)
 
     if not channel or not message:
         logger.warning("Invalid notification – missing channel or message")
         return {"error": "Missing channel or message"}
 
     connections = channels.get(channel, [])
-    logger.debug("Found %d clients for channel %s", len(connections), channel)
-    for ws in connections:
-        await ws.send_json({"channel": channel, "message": message})
-        logger.debug("Sent message to WebSocket for channel %s", channel)
+    sent = 0
+    for ws, client_id in connections:
+        if origin_client_id and origin_client_id == client_id:
+            logger.debug("Skipping sender clientId=%s", client_id)
+            continue
+        try:
+            await ws.send_json({"channel": channel, "message": message})
+            logger.debug("Sent message to clientId=%s on channel=%s", client_id, channel)
+            sent += 1
+        except Exception as e:
+            logger.error("Failed to send to clientId=%s: %s", client_id, e)
 
-    return {"status": "Notification sent", "clients": len(connections)}
+    return {"status": "Notification sent", "clients": sent}
 
 @app.websocket("/ws/{channel}")
 async def websocket_endpoint(websocket: WebSocket, channel: str):
     channel = unquote(channel)
+    query_params = parse_qs(websocket.scope["query_string"].decode())
+    client_id = query_params.get("clientId", ["unknown"])[0]
+
     await websocket.accept()
 
     if channel not in channels:
         channels[channel] = []
-    channels[channel].append(websocket)
-    logger.info("New WebSocket connection on channel: %s", channel)
+    channels[channel].append((websocket, client_id))
+    logger.info("New WebSocket connection on channel: %s (clientId=%s)", channel, client_id)
 
     try:
         while True:
             await websocket.receive_text()
     except WebSocketDisconnect:
-        channels[channel].remove(websocket)
-        logger.info("WebSocket disconnected from channel: %s", channel)
+        channels[channel] = [
+            (ws, cid) for ws, cid in channels[channel] if ws != websocket
+        ]
+        logger.info("WebSocket disconnected from channel: %s (clientId=%s)", channel, client_id)
 
 if __name__ == "__main__":
     logger.info("Starting notification server on port 3083...")
