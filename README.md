@@ -1,38 +1,39 @@
 
 # hlx-notifier
+Push notifications for BMC Helix Innovation Suite, this is to be concidered as a demo application and it's NOT production ready as is.
 
-# Push Notification Server (Med Basic Auth via Miljövariabler)
 
-Detta projekt är en containeriserad push-notis-server för BMC Helix, med Basic Auth skyddat REST-endpoint – där användarnamn/lösenord läses från miljövariabler.
-e
-## Miljövariabler
+# Basic Authentication
+The (AR Server) filter will have to set (username/password) in basic auth that is the same as the environment variables values from when container starts
 
 - `AUTH_USERNAME` – Standard: `admin`
 - `AUTH_PASSWORD` – Standard: `supersecret`
 
-## Bygg och kör container
 
+
+## Build the Container
 podman build -t hlx-notifier .
-podman run -d --name notifier -p 8083:8083 -e AUTH_USERNAME=Demo -e AUTH_PASSWORD=P@ssword hlx-notifier
+podman run -d --name notifier -p 8083:8083 -e AUTH_USERNAME=<USERNAME> -e AUTH_PASSWORD=<PASSWORD> hlx-notifier
 
 
-## Användning
+## Interfaces for the Container
 
-### WebSocket (öppen)
-`ws://<server>:8080/ws/<kanal>`
+### WebSocket - Clients listens to this
 
-### REST (Basic Auth)
-`POST http://<server>:8080/notify`
+`ws://<server>:3083/ws/<channel>`
 
-#### Exempel med curl:
+### REST (Basic Auth) - To recieve notifications to the container
 
-curl -u myuser:mypassword -X POST http://localhost:8080/notify -H "Content-Type: application/json" -d '{"channel":"incident-1234","message":"uppdaterad"}'
+`POST http://<server>:3083/notify`
+
+#### Curl example:
+
+curl -u <USERNAME>:<PASSWORD> -X POST http://localhost:3083/notify -H "Content-Type: application/json" -d '{"channel":"incident-1234","message":"updated"}'
 
 ## HTML för BMC View Field
 
-Se `viewfield.html` – kopiera in i Developer Studio View Field (HTML Mode). Justera kanalnamnet dynamiskt om möjligt.
+See `viewfield.html` – This is the original template that in run-time is fetched from the form "HLX:Notifier:Template"
 
-## Säkerhet
-
-- Använd TLS via proxy (t.ex. NGINX).
-- Använd starka lösenord och begränsa åtkomst via brandväggar/nätverk.
+## Recommended to better up security
+- Use TLS via proxy (NGINX).
+- Use a very strong password and change it often
