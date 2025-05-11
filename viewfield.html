@@ -5,35 +5,51 @@
   <title>Push Notifier</title>
 </head>
 <body>
-<script>
-(function() {
-    const channel = "$1225051102$"; // Kanalen man prenumererar på
-    const ws = new WebSocket("ws://localhost:3083/ws/" + channel);
+    <script>
+        (function() {
+            if (window.__hlxNotifierWS && window.__hlxNotifierWS.readyState === WebSocket.OPEN) {
+                console.log("WebSocket är redan öppen. Hoppar över ny anslutning.");
+                return;
+            }
+        
+            const channel = "$1225051102$";
+            const ws = new WebSocket("ws://localhost:3083/ws/" + channel);
+            window.__hlxNotifierWS = ws; // Spara referensen globalt
+        
+            console.log("Ansluter till kanal:", channel);
+        
+            ws.onopen = function() {
+                console.log("WebSocket ansluten till kanal:", channel);
+            };
+        
+            ws.onmessage = function (event) {
+                console.log("Push-notis mottagen:", event.data);
+                try {
+                    const data = JSON.parse(event.data);
+                    const eventName = channel;
+                    const requestId = data.message;  // Meddelandet som skickades via REST POST
 
-    console.log("Försöker ansluta till kanal:", channel);
+                    if (parent && parent.DView && typeof parent.DView.SendSignalToParent === "function") {
+                        console.log("Skickar signal till AR Server: event =", eventName, " requestId =", requestId);
+                        parent.DView.SendSignalToParent(undefined, eventName, requestId);
+                    } else {
+                        console.warn("Kan inte skicka signal – parent.DView.SendSignalToParent saknas");
+                    }
 
-    ws.onopen = function() {
-        console.log("WebSocket ansluten till kanal:", channel);
-    };
-
-    ws.onmessage = function(event) {
-        console.log("Meddelande mottaget:", event.data);
-        try {
-            const data = JSON.parse(event.data);
-            alert("Push notis: " + data.message);
-        } catch (e) {
-            console.error("Kunde inte tolka push-data:", e);
-        }
-    };
-
-    ws.onerror = function(error) {
-        console.error("WebSocket-fel:", error);
-    };
-
-    ws.onclose = function(event) {
-        console.warn("WebSocket frånkopplad. Kod:", event.code, "Anledning:", event.reason);
-    };
-})();
-</script>
+                } catch (e) {
+                    console.error("Fel vid hantering av push-data:", e);
+                }
+            };
+        
+            ws.onerror = function(error) {
+                console.error("WebSocket-fel:", error);
+            };
+        
+            ws.onclose = function(event) {
+                console.warn("WebSocket frånkopplad. Kod:", event.code, "Anledning:", event.reason);
+                window.__hlxNotifierWS = null;
+            };
+        })();
+        </script>
 </body>
 </html>
