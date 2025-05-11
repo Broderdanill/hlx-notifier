@@ -1,10 +1,10 @@
 <body>
     <script>
     (function() {
-        const channel = "$1225051102$";              // Channel name (e.g., form ID)
-        const clientId = "$1225051110$";             // Unique per-user or session ID (from AR Server)
+        const serverUrl = "localhost:3083";            // <- Set your server + port here
+        const channel = "$1225051102$";                // Channel name (e.g., form ID)
+        const clientId = "$1225051110$";               // Unique per-user or session ID (from AR Server)
     
-        // Generate a unique instance ID for this page load
         const instanceId = Date.now() + "-" + Math.random().toString(36).substr(2, 5);
         window.__hlxNotifierInstanceId = instanceId;
         window.__hlxNotifierClientId = clientId;
@@ -12,8 +12,20 @@
         // Clean up any existing WebSocket
         if (window.__hlxNotifierWS) {
             const ws = window.__hlxNotifierWS;
-            if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-                console.log("Closing existing WebSocket before opening new one.");
+            if (ws.readyState === WebSocket.CONNECTING) {
+                console.log("WebSocket still connecting. Delaying close slightly...");
+                setTimeout(() => {
+                    try {
+                        ws.onmessage = null;
+                        ws.onerror = null;
+                        ws.onclose = null;
+                        ws.close(1000, "Delayed reinitialization");
+                    } catch (e) {
+                        console.warn("Error while closing CONNECTING WebSocket:", e);
+                    }
+                }, 50);
+            } else if (ws.readyState === WebSocket.OPEN) {
+                console.log("Closing existing WebSocket immediately.");
                 ws.onmessage = null;
                 ws.onerror = null;
                 ws.onclose = null;
@@ -22,8 +34,8 @@
             window.__hlxNotifierWS = null;
         }
     
-        // Open new WebSocket connection with clientId in query string
-        const ws = new WebSocket("ws://localhost:3083/ws/" + channel + "?clientId=" + encodeURIComponent(clientId));
+        const wsUrl = "ws://" + serverUrl + "/ws/" + channel + "?clientId=" + encodeURIComponent(clientId);
+        const ws = new WebSocket(wsUrl);
         window.__hlxNotifierWS = ws;
     
         console.log("Connecting to channel:", channel, "Instance ID:", instanceId, "Client ID:", clientId);
@@ -67,5 +79,5 @@
         };
     })();
     </script>
-</body>
+    </body>
     
