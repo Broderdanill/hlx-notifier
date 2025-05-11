@@ -1,55 +1,48 @@
-
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Push Notifier</title>
-</head>
 <body>
     <script>
         (function() {
             if (window.__hlxNotifierWS && window.__hlxNotifierWS.readyState === WebSocket.OPEN) {
-                console.log("WebSocket är redan öppen. Hoppar över ny anslutning.");
+                console.log("WebSocket is already open. Skipping new connection.");
                 return;
             }
         
             const channel = "$1225051102$";
             const ws = new WebSocket("ws://localhost:3083/ws/" + channel);
-            window.__hlxNotifierWS = ws; // Spara referensen globalt
+            window.__hlxNotifierWS = ws; // Store the reference globally
         
-            console.log("Ansluter till kanal:", channel);
+            console.log("Connecting to channel:", channel);
         
             ws.onopen = function() {
-                console.log("WebSocket ansluten till kanal:", channel);
+                console.log("WebSocket connected to channel:", channel);
             };
         
             ws.onmessage = function (event) {
-                console.log("Push-notis mottagen:", event.data);
+                console.log("Push notification received:", event.data);
                 try {
                     const data = JSON.parse(event.data);
                     const eventName = channel;
-                    const requestId = data.message;  // Meddelandet som skickades via REST POST
+                    const requestId = data.message;  // The message sent via REST POST
 
                     if (parent && parent.DView && typeof parent.DView.SendSignalToParent === "function") {
-                        console.log("Skickar signal till AR Server: event =", eventName, " requestId =", requestId);
+                        console.log("Sending signal to AR Server: event =", eventName, " requestId =", requestId);
                         parent.DView.SendSignalToParent(undefined, eventName, requestId);
                     } else {
-                        console.warn("Kan inte skicka signal – parent.DView.SendSignalToParent saknas");
+                        console.warn("Unable to send signal – parent.DView.SendSignalToParent is missing");
                     }
 
                 } catch (e) {
-                    console.error("Fel vid hantering av push-data:", e);
+                    console.error("Error handling push data:", e);
                 }
             };
         
             ws.onerror = function(error) {
-                console.error("WebSocket-fel:", error);
+                console.error("WebSocket error:", error);
             };
         
             ws.onclose = function(event) {
-                console.warn("WebSocket frånkopplad. Kod:", event.code, "Anledning:", event.reason);
+                console.warn("WebSocket disconnected. Code:", event.code, "Reason:", event.reason);
                 window.__hlxNotifierWS = null;
             };
         })();
-        </script>
+    </script>
 </body>
-</html>
