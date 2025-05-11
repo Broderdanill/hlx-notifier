@@ -11,7 +11,7 @@ from urllib.parse import unquote, parse_qs
 from starlette.websockets import WebSocketState
 
 # Initialize logger
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG").upper()
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -48,6 +48,12 @@ async def notify(request: Request, credentials: HTTPBasicCredentials = Depends(a
         return {"error": "Missing channel or message"}
 
     connections = channels.get(channel, [])
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug("Current clients on channel '%s':", channel)
+        for ws, client_id in connections:
+            state = ws.client_state.name if hasattr(ws, 'client_state') else "unknown"
+            logger.debug("  -> clientId=%s (state=%s)", client_id, state)
+
     sent = 0
     for ws, client_id in connections:
         if origin_client_id and origin_client_id == client_id:
@@ -55,7 +61,7 @@ async def notify(request: Request, credentials: HTTPBasicCredentials = Depends(a
             continue
         try:
             await ws.send_json({"channel": channel, "message": message})
-            logger.debug("Sent message to clientId=%s on channel=%s", client_id, channel)
+            logger.info("Push sent to clientId=%s on channel=%s", client_id, channel)
             sent += 1
         except Exception as e:
             logger.error("Failed to send to clientId=%s: %s", client_id, e)
@@ -69,6 +75,7 @@ async def websocket_endpoint(websocket: WebSocket, channel: str):
     client_id = query_params.get("clientId", ["unknown"])[0]
 
     await websocket.accept()
+    logger.debug("Accepted WebSocket: path=%s, clientId=%s", channel, client_id)
 
     if channel not in channels:
         channels[channel] = []
