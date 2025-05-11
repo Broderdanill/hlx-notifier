@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Push Notifier</title>
+</head>
+<body>
+<script>
+(function() {
+    const channel = "$1225051102$"; // Byt ut till dynamiskt fält om möjligt
+    const ws = new WebSocket("ws://localhost:8083/ws/" + channel);
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        alert("Push notis: " + data.message);
+        // Här kan du istället trigga ett AR-fält eller Active Link
+    };
+
+    ws.onopen = function() {
+        console.log("WebSocket ansluten");
+    };
+
+    ws.onclose = function() {
+        console.log("WebSocket frånkopplad");
+    };
+})();
+</script>
+</body>
+</html>

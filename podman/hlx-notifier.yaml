@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hlx-notifier
+spec:
+  containers:
+    - name: hlx-notifier
+      image: localhost/hlx-notifier:latest
+      ports:
+        - containerPort: 8080
+          hostPort: 8080
+      env:
+        - name: AUTH_USERNAME
+          value: "Demo"
+        - name: AUTH_PASSWORD
+          value: "P@ssw0rd"
+      restartPolicy: Always
