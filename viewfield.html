@@ -7,21 +7,31 @@
 <body>
 <script>
 (function() {
-    const channel = "$1225051102$"; // Byt ut till dynamiskt fält om möjligt
-    const ws = new WebSocket("ws://localhost:8083/ws/" + channel);
+    const channel = "$1225051102$"; // Kanalen man prenumererar på
+    const ws = new WebSocket("ws://localhost:3083/ws/" + channel);
 
-    ws.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        alert("Push notis: " + data.message);
-        // Här kan du istället trigga ett AR-fält eller Active Link
-    };
+    console.log("Försöker ansluta till kanal:", channel);
 
     ws.onopen = function() {
-        console.log("WebSocket ansluten");
+        console.log("WebSocket ansluten till kanal:", channel);
     };
 
-    ws.onclose = function() {
-        console.log("WebSocket frånkopplad");
+    ws.onmessage = function(event) {
+        console.log("Meddelande mottaget:", event.data);
+        try {
+            const data = JSON.parse(event.data);
+            alert("Push notis: " + data.message);
+        } catch (e) {
+            console.error("Kunde inte tolka push-data:", e);
+        }
+    };
+
+    ws.onerror = function(error) {
+        console.error("WebSocket-fel:", error);
+    };
+
+    ws.onclose = function(event) {
+        console.warn("WebSocket frånkopplad. Kod:", event.code, "Anledning:", event.reason);
     };
 })();
 </script>
