@@ -1,4 +1,3 @@
-
 FROM python:3.11-slim
 
 # Skapa en icke-root-användare
@@ -8,13 +7,16 @@ RUN useradd -m appuser
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Lägg in appkod
+# Lägg in appkod + startskript
 COPY . /app
+COPY start.sh /start.sh
 WORKDIR /app
 
-# Byt användare
+# Gör startscriptet körbart
+RUN chmod +x /start.sh
+
+# Byt till icke-root
 USER appuser
 
-CMD ["/bin/sh", "-c", "if [ \"$USE_TLS\" = \"true\" ]; \
-    then uvicorn main:app --host 0.0.0.0 --port 3083 --ssl-keyfile $KEY_FILE --ssl-certfile $CERT_FILE; \
-    else uvicorn main:app --host 0.0.0.0 --port 3083; fi"]
+# Starta via skript
+CMD ["/start.sh"]
