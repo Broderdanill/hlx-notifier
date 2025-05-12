@@ -1,72 +1,61 @@
-
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException, Depends
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from typing import Dict, List, Tuple
-import uvicorn
-import secrets
-import os
-import logging
-import asyncio
-from urllib.parse import unquote, parse_qs
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.websockets import WebSocketState
+import uvicorn
+import asyncio
+import logging
+from urllib.parse import unquote, parse_qs
 
-# Initialize logger
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
-logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
+# Logger
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
+# App och rate limiter
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
-security = HTTPBasic()
+app.state.limiter = limiter
+app.add_middleware(BaseHTTPMiddleware, dispatch=limiter.middleware)
 
-# Dictionary mapping channels to list of (WebSocket, clientId)
+# WebSocket-kanaler
 channels: Dict[str, List[Tuple[WebSocket, str]]] = {}
+push_counter = 0
 
-# Read username/password from environment variables (default fallback)
-VALID_USERNAME = os.getenv("AUTH_USERNAME", "admin")
-VALID_PASSWORD = os.getenv("AUTH_PASSWORD", "supersecret")
-
-def authenticate(credentials: HTTPBasicCredentials = Depends(security)):
-    correct_username = secrets.compare_digest(credentials.username, VALID_USERNAME)
-    correct_password = secrets.compare_digest(credentials.password, VALID_PASSWORD)
-    if not (correct_username and correct_password):
-        logger.warning("Invalid authentication attempt: %s", credentials.username)
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    logger.debug("Authentication succeeded for user: %s", credentials.username)
+# Input-modell
+class NotificationPayload(BaseModel):
+    channel: str
+    message: str
+    originClientId: str | None = None
 
 @app.post("/notify")
-async def notify(request: Request, credentials: HTTPBasicCredentials = Depends(authenticate)):
-    data = await request.json()
-    channel = data.get("channel")
-    message = data.get("message")
-    origin_client_id = data.get("originClientId")  # Optional
-
-    logger.info("Received notification: channel=%s, message=%s, originClientId=%s",
-                channel, message, origin_client_id)
+@limiter.limit("5/second")
+async def notify(payload: NotificationPayload, request: Request):
+    global push_counter
+    channel = payload.channel
+    message = payload.message
+    origin_client_id = payload.originClientId
 
     if not channel or not message:
-        logger.warning("Invalid notification – missing channel or message")
-        return {"error": "Missing channel or message"}
+        raise HTTPException(status_code=400, detail="Missing channel or message")
 
     connections = channels.get(channel, [])
-    if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("Current clients on channel '%s':", channel)
-        for ws, client_id in connections:
-            state = ws.client_state.name if hasattr(ws, 'client_state') else "unknown"
-            logger.debug("  -> clientId=%s (state=%s)", client_id, state)
-
     sent = 0
     for ws, client_id in connections:
-        if origin_client_id and origin_client_id == client_id:
-            logger.debug("Skipping sender clientId=%s", client_id)
+        if origin_client_id and client_id == origin_client_id:
             continue
         try:
             await ws.send_json({"channel": channel, "message": message})
-            logger.info("Push sent to clientId=%s on channel=%s", client_id, channel)
             sent += 1
         except Exception as e:
-            logger.error("Failed to send to clientId=%s: %s", client_id, e)
+            logger.error("Failed to send to %s: %s", client_id, e)
 
-    return {"status": "Notification sent", "clients": sent}
+    logger.info("Push to channel=%s, sent=%d", channel, sent)
+    push_counter += sent
+    return {"status": "ok", "sent": sent}
 
 @app.websocket("/ws/{channel}")
 async def websocket_endpoint(websocket: WebSocket, channel: str):
@@ -75,47 +64,46 @@ async def websocket_endpoint(websocket: WebSocket, channel: str):
     client_id = query_params.get("clientId", ["unknown"])[0]
 
     await websocket.accept()
-    logger.debug("Accepted WebSocket: path=%s, clientId=%s", channel, client_id)
 
     if channel not in channels:
         channels[channel] = []
 
-    # Remove any existing connection with the same clientId
-    previous = [ws for ws, cid in channels[channel] if cid == client_id]
-    if previous:
-        logger.info("Replacing existing connection for clientId=%s on channel=%s", client_id, channel)
-        channels[channel] = [(ws, cid) for ws, cid in channels[channel] if cid != client_id]
+    # Ta bort tidigare anslutningar med samma clientId
+    channels[channel] = [(ws, cid) for ws, cid in channels[channel] if cid != client_id]
 
     channels[channel].append((websocket, client_id))
-    logger.info("New WebSocket connection on channel: %s (clientId=%s)", channel, client_id)
+    logger.info("New WebSocket: channel=%s, clientId=%s", channel, client_id)
 
     try:
         while True:
-            await websocket.receive_text()
+            data = await websocket.receive_text()
+            if data.strip().lower() == "ping":
+                await websocket.send_text("pong")
     except WebSocketDisconnect:
-        channels[channel] = [
-            (ws, cid) for ws, cid in channels[channel] if ws != websocket
-        ]
-        logger.info("WebSocket disconnected from channel: %s (clientId=%s)", channel, client_id)
+        channels[channel] = [(ws, cid) for ws, cid in channels[channel] if ws != websocket]
+        logger.info("Disconnected: channel=%s, clientId=%s", channel, client_id)
 
-# Background task to clean up dead WebSocket connections
+@app.get("/status")
+async def status():
+    return {
+        "channels": {ch: len(clients) for ch, clients in channels.items()},
+        "total_pushes": push_counter
+    }
+
 @app.on_event("startup")
-async def start_cleanup_task():
-    async def cleanup_dead_connections():
+async def cleanup_dead_sockets():
+    async def cleaner():
         while True:
-            logger.debug("Running cleanup task for dead WebSocket connections...")
             for channel, connections in list(channels.items()):
-                new_list = []
+                live = []
                 for ws, client_id in connections:
                     if ws.client_state != WebSocketState.CONNECTED:
-                        logger.info("Removing dead WebSocket (clientId=%s) from channel: %s", client_id, channel)
-                        continue
-                    new_list.append((ws, client_id))
-                channels[channel] = new_list
-            await asyncio.sleep(30)  # check every 30 seconds
-
-    asyncio.create_task(cleanup_dead_connections())
+                        logger.info("Removing dead socket: %s", client_id)
+                    else:
+                        live.append((ws, client_id))
+                channels[channel] = live
+            await asyncio.sleep(30)
+    asyncio.create_task(cleaner())
 
 if __name__ == "__main__":
-    logger.info("Starting notification server on port 3083...")
-    uvicorn.run(app, host="0.0.0.0", port=3083)
+    uvicorn.run("main_hardened:app", host="0.0.0.0", port=3083)
