@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Dict, List, Tuple
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from starlette.middleware.base import BaseHTTPMiddleware
+from slowapi.middleware import SlowAPIMiddleware
 from starlette.websockets import WebSocketState
 import uvicorn
 import asyncio
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
 app.state.limiter = limiter
-app.add_middleware(BaseHTTPMiddleware, dispatch=limiter.middleware)
+app.add_middleware(SlowAPIMiddleware)
 
 # WebSocket-kanaler
 channels: Dict[str, List[Tuple[WebSocket, str]]] = {}

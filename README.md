@@ -13,7 +13,7 @@ The (AR Server) filter will have to set (username/password) in basic auth that i
 
 ## Build the Container
 podman build -t hlx-notifier .
-podman run -d --name notifier -p 8083:8083 -e AUTH_USERNAME=<USERNAME> -e AUTH_PASSWORD=<PASSWORD> hlx-notifier
+podman run -d --name notifier -p 3083:3083 -e AUTH_USERNAME=<USERNAME> -e AUTH_PASSWORD=<PASSWORD> hlx-notifier
 
 
 ## Interfaces for the Container
