@@ -15,4 +15,6 @@ WORKDIR /app
 # Byt användare
 USER appuser
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3083"]
+CMD ["/bin/sh", "-c", "if [ \"$USE_TLS\" = \"true\" ]; \
+    then uvicorn main:app --host 0.0.0.0 --port 3083 --ssl-keyfile $KEY_FILE --ssl-certfile $CERT_FILE; \
+    else uvicorn main:app --host 0.0.0.0 --port 3083; fi"]
