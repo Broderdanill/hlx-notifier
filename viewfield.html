@@ -1,7 +1,7 @@
 <body>
     <script>
     (function () {
-        const serverUrl = "###ServerUrl###";
+        const serverHost = "###ServerUrl###"; // Ex: "example.com:3083"
         const channel = "$1225051102$";
         const clientId = "$1225051110$";
     
@@ -34,7 +34,9 @@
                 window.__hlxNotifierWS = null;
             }
     
-            const wsUrl = "ws://" + serverUrl + "/ws/" + channel + "?clientId=" + encodeURIComponent(clientId);
+            // Use correct protocol based on current page
+            const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+            const wsUrl = wsProtocol + serverHost + "/ws/" + channel + "?clientId=" + encodeURIComponent(clientId);
             const ws = new WebSocket(wsUrl);
             window.__hlxNotifierWS = ws;
     
@@ -45,8 +47,7 @@
             };
     
             ws.onmessage = function (event) {
-                console.log("🔥 onmessage fired:", event.data); // Viktigt för felsökning
-    
+                console.log("🔥 onmessage fired:", event.data);
                 try {
                     const data = JSON.parse(event.data);
                     const eventName = channel;
@@ -60,7 +61,6 @@
                     } else {
                         console.warn("⚠️ Unable to send signal – parent.DView.SendSignalToParent is missing");
                     }
-    
                 } catch (e) {
                     console.error("❌ Error handling push data:", e);
                 }
@@ -74,14 +74,12 @@
                 console.warn("❗ WebSocket disconnected. Code:", event.code, "Reason:", event.reason);
                 window.__hlxNotifierWS = null;
     
-                // Retry connection
                 setTimeout(() => {
                     console.log("🔄 Reconnecting WebSocket...");
                     initWebSocket();
                 }, 2000);
             };
     
-            // Ping every 20 seconds to keep connection alive
             setInterval(() => {
                 if (ws.readyState === WebSocket.OPEN) {
                     console.log("📡 Sending keepalive ping from clientId:", clientId);
