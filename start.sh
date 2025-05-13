@@ -16,8 +16,8 @@ if [ "$USE_TLS" = "true" ]; then
     fi
 
     echo "[INFO] TLS files found. Starting with HTTPS..."
-    exec uvicorn main:app --host 0.0.0.0 --port 3083 --ssl-keyfile "$KEY_FILE" --ssl-certfile "$CERT_FILE"
+    exec uvicorn main_hardened:app --host 0.0.0.0 --port 3083 --ssl-keyfile "$KEY_FILE" --ssl-certfile "$CERT_FILE"
 else
     echo "[INFO] Starting without TLS (HTTP only)..."
-    exec uvicorn main:app --host 0.0.0.0 --port 3083
+    exec uvicorn main_hardened:app --host 0.0.0.0 --port 3083
 fi
